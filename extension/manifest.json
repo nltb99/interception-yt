@@ -28,7 +28,7 @@
     ],
     "background": {
         "page": "assets/index.html",
-        "persistent": true
+        "persistent": false
     },
     "options_page": "assets/index.html"
 }
