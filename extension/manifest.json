@@ -5,7 +5,9 @@
     "description": "Simple Youtube block unexpected contents",
     "permissions": [
         "contextMenus",
-        "activeTab"
+        "activeTab",
+        "tabs",
+        "storage"
     ],
     "icons": {
         "16": "icons/icon16x16.png",
@@ -15,10 +17,10 @@
     "content_scripts": [
         {
             "matches": [
-                "<all_urls>"
+                "*://www.youtube.com/*"
             ],
             "js": [
-                "assets/background.js"
+                "assets/contentscript.js"
             ],
             "css": [
                 "assets/style.css"
@@ -27,7 +29,9 @@
         }
     ],
     "background": {
-        "page": "assets/index.html",
+        "scripts": [
+            "assets/background.js"
+        ],
         "persistent": false
     },
     "options_page": "assets/index.html"
