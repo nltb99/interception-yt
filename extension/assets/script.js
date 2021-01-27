@@ -83,6 +83,3 @@ async function insertItem({idx,id,name,customUrl}) {
 }
 let deleteButtons = document.querySelectorAll(".deleteButtons")
 
-function deleteItem(event) {
-    event.parentElement.parentElement.parentElement.remove()
-}
