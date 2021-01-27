@@ -22,23 +22,26 @@ form.addEventListener("submit",function(e) {
             const request = await fetch(url,options)
             const channelSnippet = await request.json()
             if(channelSnippet.items) {
+                const channelName = await channelSnippet?.items[0].snippet?.title
+                const customUrl = await channelSnippet?.items[0].snippet?.customUrl
                 if(channels) {
-                    channels = JSON.parse(channels)
+                    channels = await JSON.parse(channels)
                     if(channels[channelId[0]] === undefined) {
-                        channels[channelId[0]] = {channel: channelSnippet?.items[0].snippet?.title,id: channelId[0]}
-                        chrome.storage.sync.set({channels: JSON.stringify(channels)},function() {
-                            insertItem({idx: Object.getOwnPropertyNames(channels).length,channel: channelSnippet?.items[0].snippet?.title,id: channelId[0]})
+                        channels[channelId[0]] = await {id: channelId[0],name: channelName,customUrl}
+                        await chrome.storage.sync.set({channels: JSON.stringify(channels)},function() {
+                            insertItem({idx: Object.getOwnPropertyNames(channels).length - 1,id: channelId[0],name: channelName,customUrl})
                         });
                     }
                 } else {
-                    chrome.storage.sync.set({channels: JSON.stringify({[channelId[0]]: {channel: channelSnippet?.items[0].snippet?.title,id: channelId[0]}})},function() {
-                        insertItem({idx: 0,channel: channelSnippet?.items[0].snippet?.title,id: channelId[0]})
+                    await chrome.storage.sync.set({channels: JSON.stringify({[channelId[0]]: {id: channelId[0],name: channelName,customUrl}})},function() {
+                        insertItem({idx: 0,id: channelId[0],name: channelName,customUrl})
                     });
                 }
             }
             input.value = ""
         } catch(e) {
             input.value = ""
+            console.log(e)
         }
     });
 })
@@ -48,17 +51,18 @@ chrome.storage.sync.get(['channels'],function(result) {
         channels = JSON.parse(channels)
         let idx = 0
         for(const [key,value] of Object.entries(channels)) {
-            insertItem({idx: idx,id: value.id,channel: value.channel})
+            insertItem({idx: idx,id: value.id,name: value.name,customUrl: value.customUrl})
             idx += 1
         }
     }
 })
-async function insertItem({idx,id,channel}) {
+async function insertItem({idx,id,name,customUrl}) {
     try {
         let tbody = document.createElement('tr')
         let tbodyContents = `
             <td>${idx}</td>
-            <td>${channel}</td>
+            <td>${name || "-"}</td>
+            <td>${customUrl || "-"}</td>
             <td>${id}</td>
             <td><button class="deleteButtons">Del</button></td>
         `
@@ -66,7 +70,7 @@ async function insertItem({idx,id,channel}) {
         table.append(tbody)
         deleteButtons = document.querySelectorAll(".deleteButtons")
         deleteButtons[idx].addEventListener("click",async function(e) {
-            const id = await deleteButtons[idx].parentElement.parentElement.children[2].innerHTML
+            const id = await deleteButtons[idx].parentElement.parentElement.children[3].innerHTML
             await chrome.storage.sync.get(['channels'],async function(result) {
                 let channels = await JSON.parse(result.channels)
                 await delete channels[id]
@@ -75,7 +79,7 @@ async function insertItem({idx,id,channel}) {
                 });
             })
         })
-    } catch(e) {}
+    } catch(e) {console.log(e)}
 }
 let deleteButtons = document.querySelectorAll(".deleteButtons")
 

@@ -12,7 +12,7 @@ function getUrlParams(hashKey = null) {
         for(const [key,value] of params.entries()) dict[key] = value
         if(hashKey) return dict[hashKey]
         else return dict
-    } catch(e) {}
+    } catch(e) {console.log(e)}
 }
 async function init() {
     try {
@@ -31,18 +31,34 @@ async function init() {
             const data = await request.json()
             channelId = data?.items[0].snippet?.channelId
         }
-        channelId = await channelId !== "" ? channelId : window.location.href.match(/(?<=https:\/\/www\.youtube\.com\/channel\/)[\w].+/g)[0]
+        if(channelId === "" && window.location.href.includes("https://www.youtube.com/channel/")) {
+            const regChannel = await /(?<=https:\/\/www\.youtube\.com\/channel\/)[\w].+/g
+            channelId = await await window.location.href.match(regChannel)[0]
+        }
+        let isMatchAlias = false
+        if(channelId === "" && window.location.href.includes("https://www.youtube.com/c/")) {
+            const regAlias = await /(?<=https:\/\/www\.youtube\.com\/c\/)[\w].+/g
+            channelId = await window.location.href.match(regAlias)[0]
+            isMatchAlias = await true
+        }
         await chrome.storage.sync.get(['channels'],function(result) {
             if(result.channels) {
                 let channels = JSON.parse(result.channels)
-                console.log(channels[channelId],channelId)
-                if(channels[channelId] !== undefined) {
-                    window.location = "https://www.youtube.com"
+                if(isMatchAlias) {
+                    for(const [key,value] of Object.entries(channels)) {
+                        if(value.customUrl === channelId) {
+                            window.location = "https://www.youtube.com";
+                            break;
+                        }
+                    }
+                } else {
+                    if(channels[channelId] !== undefined) {
+                        window.location = "https://www.youtube.com"
+                    }
                 }
             } else {}
         });
-        return
-    } catch(e) {}
+    } catch(e) {console.log(e)}
 }
 init()
 
