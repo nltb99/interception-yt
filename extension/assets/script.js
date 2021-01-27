@@ -1,11 +1,10 @@
-console.log('script')
 const form = document.querySelector(".form")
 const input = document.querySelector(".input")
 const table = document.querySelector(".table")
 form.addEventListener("submit",function(e) {
     e.preventDefault()
     if(!input.value) return
-    let channelId = input.value.match(/(?<=www\.youtube\.com\/channel\/)[\w].+/g)
+    let channelId = input.value.match(/(?<=https:\/\/www\.youtube\.com\/channel\/)[\w].+/g)
     if((channelId && channelId.length === 0) || !channelId) {
         input.value = ""
         return
@@ -25,12 +24,16 @@ form.addEventListener("submit",function(e) {
             if(channelSnippet.items) {
                 if(channels) {
                     channels = JSON.parse(channels)
-                    channels.push({channel: channelSnippet?.items[0].snippet?.title,id: channelId[0]})
-                    insertItem({idx: channels.length,channel: channelSnippet?.items[0].snippet?.title,id: channelId[0]})
-                    chrome.storage.sync.set({channels: JSON.stringify(channels)},function() {});
+                    if(channels[channelId[0]] === undefined) {
+                        channels[channelId[0]] = {channel: channelSnippet?.items[0].snippet?.title,id: channelId[0]}
+                        chrome.storage.sync.set({channels: JSON.stringify(channels)},function() {
+                            insertItem({idx: Object.getOwnPropertyNames(channels).length,channel: channelSnippet?.items[0].snippet?.title,id: channelId[0]})
+                        });
+                    }
                 } else {
-                    insertItem({idx: 1,channel: channelSnippet?.items[0].snippet?.title,id: channelId[0]})
-                    chrome.storage.sync.set({channels: JSON.stringify([{channel: channelSnippet?.items[0].snippet?.title,id: channelId[0]}])},function() {});
+                    chrome.storage.sync.set({channels: JSON.stringify({[channelId[0]]: {channel: channelSnippet?.items[0].snippet?.title,id: channelId[0]}})},function() {
+                        insertItem({idx: 0,channel: channelSnippet?.items[0].snippet?.title,id: channelId[0]})
+                    });
                 }
             }
             input.value = ""
@@ -39,31 +42,40 @@ form.addEventListener("submit",function(e) {
         }
     });
 })
-
 chrome.storage.sync.get(['channels'],function(result) {
     let channels = result.channels
     if(channels) {
         channels = JSON.parse(channels)
-        channels.map((e,idx) => {
-            insertItem({idx: idx,id: e.id,channel: e.channel})
-        })
+        let idx = 0
+        for(const [key,value] of Object.entries(channels)) {
+            insertItem({idx: idx,id: value.id,channel: value.channel})
+            idx += 1
+        }
     }
 })
-function insertItem({idx,id,channel}) {
-    let tbody = document.createElement('tr')
-    let tbodyContents = `
-        <td>${idx}</td>
-        <td>${id}</td>
-        <td>${channel}</td>
-        <td><button class="deleteButtons">Del</button></td>
-    `
-    tbody.innerHTML = tbodyContents
-    table.append(tbody)
-    deleteButtons = document.querySelectorAll(".deleteButtons")
-    deleteButtons[idx].addEventListener("click",function(e) {
-        window.e = e
-    })
-    window.haha = deleteButtons[idx]
+async function insertItem({idx,id,channel}) {
+    try {
+        let tbody = document.createElement('tr')
+        let tbodyContents = `
+            <td>${idx}</td>
+            <td>${channel}</td>
+            <td>${id}</td>
+            <td><button class="deleteButtons">Del</button></td>
+        `
+        tbody.innerHTML = tbodyContents
+        table.append(tbody)
+        deleteButtons = document.querySelectorAll(".deleteButtons")
+        deleteButtons[idx].addEventListener("click",async function(e) {
+            const id = await deleteButtons[idx].parentElement.parentElement.children[2].innerHTML
+            await chrome.storage.sync.get(['channels'],async function(result) {
+                let channels = await JSON.parse(result.channels)
+                await delete channels[id]
+                await chrome.storage.sync.set({channels: JSON.stringify(channels)},function() {
+                    deleteButtons[idx].parentElement.parentElement.remove()
+                });
+            })
+        })
+    } catch(e) {}
 }
 let deleteButtons = document.querySelectorAll(".deleteButtons")
 
