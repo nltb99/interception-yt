@@ -1,9 +1,9 @@
 {
   "name": "current-project",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node run server.js",
     "devStart": "nodemon server.js"
   },
   "author": "",
@@ -15,5 +15,7 @@
   "devDependencies": {
     "dotenv": "^8.0.0",
     "nodemon": "^1.19.0"
-  }
+  },
+  "keywords": [],
+  "description": ""
 }
