@@ -2,7 +2,7 @@
   box-sizing: border-box;
 }
 
-.header {
+/* .header {
   background-color: #5c5c5c;
   padding: 30px 40px;
   color: white;
@@ -13,9 +13,9 @@
   content: "";
   display: table;
   clear: both;
-}
+} */
 
-input {
+/* input {
   margin: 0;
   border: none;
   border-radius: 0;
@@ -23,7 +23,7 @@ input {
   padding: 10px;
   float: left;
   font-size: 16px;
-}
+} */
 
 .addBtn {
   padding: 10px;
