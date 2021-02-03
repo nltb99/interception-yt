@@ -5,6 +5,18 @@ chrome.runtime.onMessage.addListener(
         }
     }
 );
+function countTime(totalWatched = null) {
+    chrome.storage.sync.set({totalWatched: JSON.stringify(Date.parse(new Date(totalWatched)))},function() {});
+    clearTimeout(countTime.interval);
+    countTime.interval = setTimeout(function() {
+        countTime(totalWatched + 1000)
+    },1000);
+}
+function isToday(dateCompe) {
+    if(typeof dateCompe.getDay !== 'function') dateCompe = new Date(dateCompe)
+    let today = new Date();
+    return dateCompe.getDate() === today.getDate() && dateCompe.getMonth() === today.getMonth() && dateCompe.getFullYear() === today.getFullYear();
+}
 function getUrlParams(hashKey = null) {
     try {
         const searchString = window.location.search
@@ -12,17 +24,31 @@ function getUrlParams(hashKey = null) {
         for(const [key,value] of params.entries()) dict[key] = value
         if(hashKey) return dict[hashKey]
         else return dict
-    } catch(e) {console.log(e)}
+    } catch(e) {}
 }
 function includes(url) {
     return window.location.href.includes(url)
 }
 function matchReg(reg) {
-    return window.location.href.match(reg)[0]
+    let pathname = new URL(window.location.href).pathname
+    return pathname.match(reg)[0]
 }
 async function init() {
     try {
-        console.log('init')
+        console.log('init: !')
+        chrome.storage.sync.get(['totalWatched'],function(result) {
+            let {totalWatched} = result
+            if(totalWatched) {
+                totalWatched = +JSON.parse(totalWatched)
+                if(isToday(new Date(totalWatched))) {
+                    countTime(new Date(totalWatched).getTime());
+                } else {
+                    countTime(new Date(new Date().getFullYear(),new Date().getMonth() + 1,new Date().getDay(),0,0,0).getTime());
+                }
+            } else {
+                countTime(new Date(new Date().getFullYear(),new Date().getMonth() + 1,new Date().getDay(),0,0,0).getTime());
+            }
+        })
         const id = await getUrlParams("v")
         let channelId = null
         if(id) {
@@ -38,15 +64,15 @@ async function init() {
             channelId = data?.items[0].snippet?.channelId
         }
         if(!channelId && includes("https://www.youtube.com/channel/")) {
-            channelId = await matchReg(/((?<=https:\/\/www\.youtube\.com\/channel\/)[\w].+)(?=\?)/g)
+            channelId = await matchReg(/(?<=channel\/)[\w].+/g)
         }
         let isMatchAlias = false
         if(!channelId && includes("https://www.youtube.com/c/")) {
-            channelId = await matchReg(/((?<=https:\/\/www\.youtube\.com\/c\/)[\w].+)(?=\?)/g)
+            channelId = await matchReg(/(?<=c\/)[\w].+/g)
             isMatchAlias = await true
         }
         if(!channelId && includes("https://www.youtube.com/user/")) {
-            channelId = await matchReg(/((?<=https:\/\/www\.youtube\.com\/user\/)[\w].+)(?=\?)/g)
+            channelId = await matchReg(/(?<=user\/)[\w].+/g)
             isMatchAlias = await true
         }
         await chrome.storage.sync.get(['channels'],function(result) {
@@ -66,7 +92,7 @@ async function init() {
                 }
             } else {}
         });
-    } catch(e) {console.log(e)}
+    } catch(e) {}
 }
 init()
 

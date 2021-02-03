@@ -14,16 +14,15 @@
         "48": "icons/icon48x48.png",
         "128": "icons/icon128x128.png"
     },
+    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
     "content_scripts": [
         {
             "matches": [
                 "*://www.youtube.com/*"
             ],
             "js": [
-                "assets/contentscript.js"
-            ],
-            "css": [
-                "assets/style.css"
+                "assets/contentscript.js",
+                "assets/libs/particles.js"
             ],
             "all_frames": true,
             "run_at": "document_start"
@@ -35,5 +34,8 @@
         ],
         "persistent": false
     },
-    "options_page": "assets/index.html"
+    "options_page": "assets/options/index.html",
+    "browser_action": {
+        "default_popup": "assets/popup/popup.html"
+    }
 }
