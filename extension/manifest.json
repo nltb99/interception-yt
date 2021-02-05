@@ -22,7 +22,9 @@
             ],
             "js": [
                 "assets/contentscript.js",
-                "assets/libs/particles.js"
+                "assets/libs/particles.js",
+                "assets/libs/jquery.js",
+                "assets/libs/bootstrap.js"
             ],
             "all_frames": true,
             "run_at": "document_start"

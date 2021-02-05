@@ -4,6 +4,8 @@
 <head>
     <title>Youtube</title>
     <script src="../libs/particles.js"></script>
+    <script src="../libs/jquery.js"></script>
+    <script src="../libs/bootstrap.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script type="text/javascript" src="script.js" defer></script>
     <link rel="stylesheet" href="style.css" />
@@ -11,11 +13,20 @@
 
 <body>
     <canvas class="background"></canvas>
+    <div class="alert alert-success alert-dismissible fade show display_toast" style="visibility: collapse;">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Invalid Channel</strong>
+    </div>
     <div class="container">
         <div class="container_left">
             <h1 class="title">Intercept Channel</h1>
             <form class="form_insert" style="width:inherit; display: flex;flex-wrap: nowrap;">
-                <input type="text" class="input_insert" placeholder="Input..." autocomplete="off" required>
+                <div style="position: relative;width: 90%; display: flex;justify-content: center;align-items: center;">
+                    <input type="text" class="input_insert" placeholder="Input Channel..." autocomplete="off" required>
+                    <button type="button" class="clear_input_insert">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
                 <i class="bi bi-youtube icon_input_insert"></i>
             </form>
         </div>

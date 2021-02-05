@@ -14,7 +14,15 @@
 body {
     width: var(--page-width);
     height: var(--page-height);
-    background: var(--background);
+    /* background: var(--background); */
+}
+
+.background {
+    position: absolute;
+    z-index: -1000;
+    width: var(--page-width) !important;
+    height: var(--page-height)!important;
+    top: 0;
 }
 
 .header {
@@ -24,15 +32,11 @@ body {
     align-items: center;
 }
 
+.time_container {
+    font-size: 20px;
+}
+
 .icon {
     width: 30px;
     height: 30px;
-}
-
-.background {
-    position: absolute;
-    z-index: -1000;
-    width: var(--page-width) !important;
-    height: var(--page-height)!important;
-    top: 0;
 }

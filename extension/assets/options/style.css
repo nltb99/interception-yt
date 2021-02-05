@@ -64,15 +64,40 @@ body {
   border-top-left-radius: var(--border-radius);
   font: 600 1em/1 'Raleway', sans-serif;
   color: white;
-  padding: 5px;
+  padding: 8px;
   border: none;
   outline: none;
-  width: 90%;
+  width: 100%;
 }
 
 .input_insert::placeholder {
   color: rgb(123, 128, 144);
-  font-weight: bold;
+  font-weight: 600;
+}
+
+.clear_input_insert {
+  position: absolute;
+  visibility: collapse;
+  background: transparent;
+  border: none;
+  outline: none;
+  right: 10px;
+  cursor: pointer;
+}
+
+.display_toast {
+  position: absolute;
+  z-index: 1000;
+  width: max-content;
+  right: 30px;
+  top: 30px;
+  opacity: .8;
+  transition: all 1s ease;
+}
+
+.clear_input_insert:hover i {
+  color: white;
+  transition: all 1s ease;
 }
 
 .icon_input_insert {

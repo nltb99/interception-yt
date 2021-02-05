@@ -1,9 +1,24 @@
 let tbody = document.querySelector(".tbody"),
-    deleteButton = document.querySelectorAll(".deleteButton")
+    clearInput = document.querySelector(".clear_input_insert"),
+    deleteButton = document.querySelectorAll(".deleteButton"),
+    form = document.querySelector(".form_insert"),
+    input = document.querySelector(".input_insert"),
+    displayToast = document.querySelector(".display_toast")
 
+function handleClearInput() {
+    clearInput.addEventListener("click",() => {
+        input.value = ""
+        clearInput.style.cssText = "visibility:collapse;"
+    })
+}
+function handleChangeInput() {
+    input.addEventListener("input",(e) => {
+        if(e.target.value) {
+            clearInput.style.cssText = "visibility:visible;"
+        }
+    })
+}
 function handleSubmit() {
-    const form = document.querySelector(".form_insert")
-    const input = document.querySelector(".input_insert")
     form.addEventListener("submit",function(e) {
         e.preventDefault()
         if(!input.value) return
@@ -42,6 +57,11 @@ function handleSubmit() {
                             handleInsert({idx: 0,id: channelId,name: channelName,customUrl})
                         });
                     }
+                } else {
+                    displayToast.style.cssText = "visibility: visible;"
+                    setTimeout(() => {
+                        displayToast.style.cssText = "visibility: collapse;"
+                    },1500)
                 }
                 input.value = ""
             } catch(e) {input.value = ""}
@@ -109,6 +129,8 @@ function init() {
         renderParticles()
         handleFillTable()
         handleSubmit()
+        handleClearInput()
+        handleChangeInput()
     } catch(e) {console.log(e)}
 }
 window.onload = function() {
