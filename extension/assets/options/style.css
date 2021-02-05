@@ -9,6 +9,7 @@
   --height-underline: 4px;
   --background: linear-gradient(to left, #3e94ec, #25b7c4);
   --border-radius: 5px;
+  --width-table: 100% !important;
   font-size: calc(16px + (24 - 16)*(100vw - 320px)/(1280 - 320));
 }
 
@@ -36,25 +37,24 @@ body {
 }
 
 .container {
-  width: 100vw;
+  width: max-content;
   height: 100vh;
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
   flex-direction: column;
+  position: relative;
 }
 
 .container_left {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 60vw;
-  margin-top: 10px;
+  width: var(--width-table);
+  margin-top: 20px;
 }
 
 .container_right {
-  width: 60vw;
-  /* max-width: 60vw; */
+  width: var(--width-table);
 }
 
 .input_insert {
@@ -116,7 +116,7 @@ body {
 }
 
 .table_container {
-  max-width: 60vw;
+  width: var(--width-table);
   max-height: 550px;
   overflow: auto;
   border-bottom-left-radius: var(--border-radius);
@@ -124,7 +124,7 @@ body {
 }
 
 .table {
-  width: 60vw;
+  width: var(--width-table);
 }
 
 .table thead th {
@@ -143,7 +143,7 @@ body {
 .footer {
   width: 100%;
   position: absolute;
-  top: 96%;
+  top: 98%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
@@ -151,7 +151,7 @@ body {
 .links {
   position: relative;
   padding-bottom: 14px;
-  font: 800 .8em/1 'Raleway', sans-serif;
+  font: 800 .7em/1 'Raleway', sans-serif;
   color: var(--color-text);
   font-weight: bold;
   text-transform: uppercase;
