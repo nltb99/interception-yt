@@ -2,30 +2,48 @@
 <html>
 
 <head>
-    <title>Youtube Blocker</title>
+    <title>Youtube</title>
+    <script src="../libs/particles.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script type="text/javascript" src="script.js" defer></script>
     <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-    <form class="form">
-        <input type="text" value="https://www.youtube.com/channel/UCYr6B4NQB0q5T8926szVwGw" class="input" />
-        <button type="submit">Click</button>
-    </form>
-    <table class="table">
-        <tr>
-            <th>No.</th>
-            <th>Channel</th>
-            <th>Name</th>
-            <th>CustomUrl</th>
-            <th>Del</th>
-        </tr>
-    </table>
-    <!-- <div id="myDIV" class="header">
-        <h2>Youtube_Blocker</h2>
-        <input type="text" id="myInput" placeholder="Enter the youtube link you want to block!">
-        <span onclick="newElement()" class="addBtn">Add</span>
-    </div> -->
+    <div>
+        Total: <span class="hour">00</span>:<span class="minute">00</span>:<span class="second">00</span>
+    </div>
+    <canvas class="background"></canvas>
+    <div class="container">
+        <div class="container_left">
+            <h1 class="title">Intercept Channel</h1>
+            <form class="form_insert" style="width:100%; display: flex;flex-wrap: nowrap;">
+                <input type="text" class="input_insert" placeholder="Input..." autocomplete="off" required>
+                <i class="bi bi-youtube icon_input_insert"></i>
+            </form>
+        </div>
+        <div class="container_right">
+            <div class="table_container">
+                <table class="table table-striped table-hover table-responsive">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>No.</th>
+                            <th>Channel</th>
+                            <th>Name</th>
+                            <th>CustomUrl</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody class="tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <div style="display: flex;justify-content: center;align-items: center;">
+            <p class="links">About</p>
+        </div>
+    </div>
 </body>
 
 </html>

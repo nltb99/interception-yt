@@ -6,6 +6,7 @@ chrome.runtime.onMessage.addListener(
     }
 );
 function countTime(totalWatched = null) {
+    totalWatched = +totalWatched
     chrome.storage.sync.set({totalWatched: JSON.stringify(Date.parse(new Date(totalWatched)))},function() {});
     clearTimeout(countTime.interval);
     countTime.interval = setTimeout(function() {
@@ -13,9 +14,9 @@ function countTime(totalWatched = null) {
     },1000);
 }
 function isToday(dateCompe) {
-    if(typeof dateCompe.getDay !== 'function') dateCompe = new Date(dateCompe)
+    if(typeof dateCompe.getDay !== 'function') dateCompe = new Date(+dateCompe)
     let today = new Date();
-    return dateCompe.getDate() === today.getDate() && dateCompe.getMonth() === today.getMonth() && dateCompe.getFullYear() === today.getFullYear();
+    return dateCompe.getDate() === today.getDate() && dateCompe.getMonth() === today.getMonth() + 1 && dateCompe.getFullYear() === today.getFullYear();
 }
 function getUrlParams(hashKey = null) {
     try {
@@ -38,7 +39,7 @@ async function init() {
         console.log('init: !')
         chrome.storage.sync.get(['totalWatched'],function(result) {
             let {totalWatched} = result
-            if(totalWatched) {
+            if(totalWatched !== undefined) {
                 totalWatched = +JSON.parse(totalWatched)
                 if(isToday(new Date(totalWatched))) {
                     countTime(new Date(totalWatched).getTime());
