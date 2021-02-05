@@ -144,12 +144,12 @@ body {
   width: var(--width-table);
   max-height: 550px;
   overflow: auto;
-  border-bottom-left-radius: var(--border-radius);
-  border-bottom-right-radius: var(--border-radius);
 }
 
 .table {
   width: var(--width-table);
+  border-bottom-left-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
 }
 
 .table thead th {
