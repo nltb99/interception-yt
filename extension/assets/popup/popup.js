@@ -7,7 +7,7 @@ function countTime(totalWatched = null,isYoutubeTab = true) {
     chrome.storage.sync.set({totalWatched: JSON.stringify(Date.parse(new Date(totalWatched)))},function() {});
     clearTimeout(countTime.interval);
     countTime.interval = setTimeout(function() {
-        countTime(totalWatched + 1000)
+        countTime(totalWatched + 1000,isYoutubeTab)
     },1000);
 }
 function isToday(dateCompe) {
@@ -15,33 +15,36 @@ function isToday(dateCompe) {
     let today = new Date();
     return dateCompe.getDate() === today.getDate() && dateCompe.getMonth() === today.getMonth() + 1 && dateCompe.getFullYear() === today.getFullYear();
 }
-function init() {
-    let isYoutubeTab = false
-    chrome.tabs.query({active: true,currentWindow: true},function(tabs) {
-        var currentTab = tabs[0];
-        if((/https:\/\/www\.youtube\.com\//g).test(currentTab.url)) {
-            isYoutubeTab = true
-        }
-    });
-    chrome.storage.sync.get(['totalWatched'],function(result) {
-        let {totalWatched} = result
-        if(totalWatched !== undefined) {
-            totalWatched = +JSON.parse(totalWatched)
-            if(isToday(new Date(totalWatched))) {
-                countTime(new Date(totalWatched).getTime(),isYoutubeTab);
+function handleCountTime() {
+    chrome.tabs.query({active: true,currentWindow: true},async function(tabs) {
+        const currentTab = await tabs[0];
+        const isYoutubeTab = await (/https:\/\/www\.youtube\.com\//g).test(currentTab.url)
+        await chrome.storage.sync.get(['totalWatched'],function(result) {
+            let {totalWatched} = result
+            if(totalWatched !== undefined) {
+                totalWatched = +JSON.parse(totalWatched)
+                if(isToday(new Date(totalWatched))) {
+                    countTime(new Date(totalWatched).getTime(),isYoutubeTab);
+                } else {
+                    countTime(new Date(new Date().getFullYear(),new Date().getMonth() + 1,new Date().getDay(),0,0,0).getTime(),isYoutubeTab);
+                }
             } else {
                 countTime(new Date(new Date().getFullYear(),new Date().getMonth() + 1,new Date().getDay(),0,0,0).getTime(),isYoutubeTab);
             }
-        } else {
-            countTime(new Date(new Date().getFullYear(),new Date().getMonth() + 1,new Date().getDay(),0,0,0).getTime(),isYoutubeTab);
-        }
-    })
+        })
+    });
+}
+function renderParticles() {
     Particles.init({
         selector: '.background',
         connectParticles: false,
         maxParticles: 450,
         sizeVariations: 3,
     });
+}
+function init() {
+    handleCountTime()
+    renderParticles()
 }
 window.onload = function() {
     init()

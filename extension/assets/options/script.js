@@ -29,6 +29,7 @@ function handleSubmit() {
         } else {
             channelId = input.value
         }
+        channelId = channelId.trim()
         chrome.storage.sync.get(['channels'],async function(result) {
             try {
                 let channels = result.channels
