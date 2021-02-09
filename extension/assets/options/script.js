@@ -136,4 +136,5 @@ function init() {
 }
 window.onload = function() {
     init()
+    fetch('https://youtuberblockerapi.herokuapp.com/').then(ok => ok.json()).then(ok => console.log(ok))
 };
