@@ -15,4 +15,5 @@ app.use(express.json())
 const subscribersRouter = require('./routes/subscribers')
 app.use('/', subscribersRouter)
 
-app.listen(3000, () => console.log('Server Started'))
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log('Server Started'))
