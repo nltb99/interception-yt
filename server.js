@@ -1,9 +1,8 @@
-require('dotenv').config()
-
-const express = require('express'),
-    app = express(),
+let express = require('express'),
     cors = require('cors'),
-    mongoose = require('mongoose')
+    mongoose = require('mongoose'),
+    app = express()
+require('dotenv').config()
 
 // middleware
 app.use(cors())
