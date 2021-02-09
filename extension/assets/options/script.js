@@ -102,20 +102,19 @@ function isHttpUrl(string) {
         return false;
     }
 }
-function handleFillTable() {
-    chrome.storage.sync.get(['channels'],function(result) {
-        let channels = result.channels
-        if(channels) {
-            channels = JSON.parse(channels)
-            let idx = 0
-            for(const [key,value] of Object.entries(channels)) {
-                // for(let i = 0;i < 10;i++) {
-                handleInsert({idx: idx,id: value.id,name: value.name,customUrl: value.customUrl})
-                // }
-                idx += 1
-            }
-        }
-    })
+async function handleFillTable() {
+    // chrome.storage.sync.get(['channels'],function(result) {
+    //     let channels = result.channels
+    //     if(channels) {
+    //         channels = JSON.parse(channels)
+    //         let idx = 0
+    //         for(const [key,value] of Object.entries(channels)) {
+    //             handleInsert({idx: idx,id: value.id,name: value.name,customUrl: value.customUrl})
+    //             idx += 1
+    //         }
+    //     }
+    // })
+    // const request = fetch(url, {})
 }
 function renderParticles() {
     Particles.init({
@@ -137,4 +136,5 @@ function init() {
 window.onload = function() {
     init()
     fetch('https://youtuberblockerapi.herokuapp.com/api').then(ok => ok.json()).then(ok => console.log(ok))
+    console.log(chrome.runtime.id)
 };

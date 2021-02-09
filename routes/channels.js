@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const Channel = require('../models/channel')
+const path = require('path')
 
 router.get('/',async (req,res) => {
   try {
@@ -8,6 +9,16 @@ router.get('/',async (req,res) => {
     res.json(channels)
   } catch(err) {
     res.status(500).json({message: err.message})
+  }
+})
+
+router.get('/asd',async (req,res) => {
+  try {
+    res.sendFile("index.html",{
+      root: path.join(__dirname,'../')
+    })
+  } catch(err) {
+    console.log(err)
   }
 })
 
