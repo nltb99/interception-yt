@@ -6,4 +6,4 @@ chrome.tabs.onUpdated.addListener(function(tabId,changeInfo,tab) {
     })
   }
 });
-// chrome.storage.sync.clear(function() {})
+// chrome.storage.sync.clear(function() {}) //
