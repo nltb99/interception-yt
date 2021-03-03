@@ -1,36 +1,75 @@
-let tbody = document.querySelector(".tbody"),
-    clearInput = document.querySelector(".clear_input_insert"),
-    deleteButton = document.querySelectorAll(".deleteButton"),
-    form = document.querySelector(".form_insert"),
-    input = document.querySelector(".input_insert"),
-    displayToast = document.querySelector(".display_toast")
+let tbodyChannel = document.querySelector(".tbodyChannel"),
+    clearInputChannel = document.querySelector(".clear_input_channel"),
+    deleteChannel = document.querySelectorAll(".deleteChannel"),
+    formChannel = document.querySelector(".form_channel"),
+    inputChannel = document.querySelector(".input_channel"),
 
-function handleClearInput() {
-    clearInput.addEventListener("click",() => {
-        input.value = ""
-        clearInput.style.cssText = "visibility:collapse;"
-    })
-}
-function handleChangeInput() {
-    input.addEventListener("input",(e) => {
-        if(e.target.value) {
-            clearInput.style.cssText = "visibility:visible;"
-        }
-    })
-}
-function handleSubmit() {
-    form.addEventListener("submit",function(e) {
-        e.preventDefault()
-        if(!input.value) return
-        let channelId = null
-        if(isHttpUrl(input.value)) {
-            let pathname = new URL(input.value).pathname
-            channelId = pathname.match(/(?<=channel\/)[\w].+/g)[0]
+    tbodyKeyword = document.querySelector(".tbodyKeyword"),
+    formKeyword = document.querySelector(".form_keyword"),
+    inputKeyword = document.querySelector(".input_keyword"),
+    deleteKeyword = document.querySelectorAll(".deleteKeyword"),
+    clearInputKeyword = document.querySelector(".clear_input_keyword"),
+
+    tabs = document.querySelectorAll(".tab"),
+    numOfTabs = 4,
+    bgpage = chrome.extension.getBackgroundPage();
+
+function handleTabs() {
+    chrome.storage.local.get(['tabIndex'],function(result) {
+        let tabIndex = result.tabIndex
+        if(tabIndex) {
+            tabIndex = +tabIndex
+            tabs[tabIndex].checked = true
         } else {
-            channelId = input.value
+            chrome.storage.local.set({tabIndex: "0"},function() {
+                tabs[0].checked = true
+            });
         }
+    })
+    for(let i = 0;i < numOfTabs;i++) {
+        tabs[i].addEventListener('click',() => {
+            chrome.storage.local.set({tabIndex: i.toString()},function() {});
+        })
+    }
+}
+function handleClearInput() {
+    clearInputChannel.addEventListener("click",() => {
+        inputChannel.value = ""
+    })
+    clearInputKeyword.addEventListener("click",() => {
+        inputKeyword.value = ""
+    })
+}
+function handleSubmitChannel() {
+    formChannel.addEventListener("submit",async function(e) {
+        e.preventDefault()
+        if(!inputChannel.value) {
+            handleShakeOnError(formChannel)
+            return
+        }
+        let channelInput = decodeURIComponent(unescape(inputChannel.value.toString().trim()))
+        let channelId = null
+        let id = getUrlParams(channelInput,"v")
+        if(id && isHttpUrl(channelInput)) {
+            let url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id=${id}&key=AIzaSyDPpPlIMj5o_W3Q5B7qmn5-ex0kimioSiQ`
+            const options = await {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            const request = await fetch(url,options)
+            const data = await request.json()
+            channelId = await data?.items[0].snippet?.channelId
+        } else if(isHttpUrl(channelInput)) {
+            let pathname = new URL(channelInput).pathname
+            if(pathname.match(/(?<=channel\/)[\w].+/g)) {
+                channelId = pathname.match(/(?<=channel\/)[\w].+/g)[0]
+            }
+        }
+        channelId = channelId ? channelId : channelInput
         channelId = channelId.trim()
-        chrome.storage.sync.get(['channels'],async function(result) {
+        chrome.storage.local.get(['channels'],async function(result) {
             try {
                 let channels = result.channels
                 let url = `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=${channelId}&maxResults=1&key=AIzaSyDPpPlIMj5o_W3Q5B7qmn5-ex0kimioSiQ`
@@ -49,72 +88,147 @@ function handleSubmit() {
                         channels = await JSON.parse(channels)
                         if(channels[channelId] === undefined) {
                             channels[channelId] = await {id: channelId,name: channelName,customUrl}
-                            await chrome.storage.sync.set({channels: JSON.stringify(channels)},function() {
-                                handleInsert({idx: Object.getOwnPropertyNames(channels).length - 1,id: channelId,name: channelName,customUrl})
+                            await chrome.storage.local.set({channels: JSON.stringify(channels)},function() {
+                                handleInsertChannel({idx: Object.keys(channels).length - 1,id: channelId,name: channelName,customUrl})
                             });
+                        } else {
+                            handleShakeOnError(formChannel)
                         }
                     } else {
-                        await chrome.storage.sync.set({channels: JSON.stringify({[channelId]: {id: channelId,name: channelName,customUrl}})},function() {
-                            handleInsert({idx: 0,id: channelId,name: channelName,customUrl})
+                        await chrome.storage.local.set({channels: JSON.stringify({[channelId]: {id: channelId,name: channelName,customUrl}})},function() {
+                            handleInsertChannel({idx: 0,id: channelId,name: channelName,customUrl})
                         });
                     }
                 } else {
-                    displayToast.style.cssText = "visibility: visible;"
-                    setTimeout(() => {
-                        displayToast.style.cssText = "visibility: collapse;"
-                    },1500)
+                    handleShakeOnError(formChannel)
                 }
-                input.value = ""
-            } catch(e) {input.value = ""}
+                inputChannel.value = ""
+            } catch(e) {
+                inputChannel.value = ""
+                handleShakeOnError(formChannel)
+            }
         });
     })
 }
-async function handleInsert({idx,id,name,customUrl}) {
-    try {
-        let tr = document.createElement('tr')
-        let tbodyContents = `
-            <td style="text-align:center">${idx}</td>
+async function handleInsertChannel({idx,id,name,customUrl}) {
+    let tr = document.createElement('tr')
+    let tbodyContents = `
+            <td style="text-align:center">${idx + 1}</td>
             <td style="text-align:center">${name || "-"}</td>
             <td style="text-align:center">${customUrl || "-"}</td>
             <td style="text-align:center">${id}</td>
-            <td><button class="deleteButton"><i class="bi-trash" style="font-size: 20px;"/></button></td>
+            <td style="text-align:center"><button class="deleteChannel"><i class="bi-trash" style="font-size: 20px;"/></button></td>
         `
-        tr.innerHTML = tbodyContents
-        tbody.append(tr)
-        deleteButton = document.querySelectorAll(".deleteButton")
-        deleteButton[idx].addEventListener("click",async function(e) {
-            let id = await deleteButton[idx].parentElement.parentElement.children[3].innerHTML
-            await chrome.storage.sync.get(['channels'],async function(result) {
-                let channels = await JSON.parse(result.channels)
-                await delete channels[id]
-                await chrome.storage.sync.set({channels: JSON.stringify(channels)},function() {
-                    deleteButton[idx].parentElement.parentElement.remove()
-                });
-            })
+    tr.innerHTML = tbodyContents
+    tbodyChannel.append(tr)
+    deleteChannel = document.querySelectorAll(".deleteChannel")
+    deleteChannel[idx].addEventListener("click",async function(e) {
+        let id = await deleteChannel[idx].parentElement.parentElement.children[3].innerHTML
+        await chrome.storage.local.get(['channels'],async function(result) {
+            let channels = await JSON.parse(result.channels)
+            await delete channels[id]
+            await chrome.storage.local.set({channels: JSON.stringify(channels)},function() {
+                deleteChannel[idx].parentElement.parentElement.remove()
+            });
         })
-    } catch(e) {console.log(e)}
+    })
+}
+function handleSubmitKeyword() {
+    try {
+        formKeyword.addEventListener('submit',(e) => {
+            e.preventDefault()
+            if(!inputKeyword.value) {
+                handleShakeOnError(formKeyword)
+                return
+            }
+            const keyword = decodeURIComponent(unescape(inputKeyword.value.toString().trim())).toLowerCase()
+            chrome.storage.local.get(['keywords'],function(result) {
+                try {
+                    let keywords = result.keywords
+                    if(keywords) {
+                        keywords = JSON.parse(keywords)
+                        if(keywords[keyword] === undefined) {
+                            keywords[keyword] = null
+                            chrome.storage.local.set({keywords: JSON.stringify(keywords)},function() {
+                                handleInsertKeyword({idx: Object.keys(keywords).length - 1,keyword})
+                            });
+                        } else {
+                            handleShakeOnError(formKeyword)
+                        }
+                    } else {
+                        chrome.storage.local.set({keywords: JSON.stringify({[keyword]: null})},function() {
+                            handleInsertKeyword({idx: 0,keyword})
+                        });
+                    }
+                    inputKeyword.value = ""
+                } catch(e) {
+                    inputKeyword.value = ""
+                    handleShakeOnError(formKeyword)
+                }
+            });
+        })
+    } catch(e) {}
+}
+function handleInsertKeyword({idx,keyword}) {
+    let tr = document.createElement('tr')
+    let tbodyContents = `
+            <td style="text-align:center">${idx + 1}</td>
+            <td style="text-align:center">${keyword}</td>
+            <td style="text-align:center"><button class="deleteKeyword"><i class="bi-trash" style="font-size: 20px;"/></button></td>
+        `
+    tr.innerHTML = tbodyContents
+    tbodyKeyword.append(tr)
+    deleteKeyword = document.querySelectorAll(".deleteKeyword")
+    deleteKeyword[idx].addEventListener("click",async function(e) {
+        let id = await deleteKeyword[idx].parentElement.parentElement.children[1].innerHTML
+        await chrome.storage.local.get(['keywords'],async function(result) {
+            let keywords = await JSON.parse(result.keywords)
+            await delete keywords[id]
+            await chrome.storage.local.set({keywords: JSON.stringify(keywords)},function() {
+                deleteKeyword[idx].parentElement.parentElement.remove()
+            });
+        })
+    })
 }
 function isHttpUrl(string) {
     try {
         let url = new URL(string);
         return url.protocol === "http:" || url.protocol === "https:";
-    } catch(e) {
-        return false;
-    }
+    } catch(e) {}
 }
-async function handleFillTable() {
-    // chrome.storage.sync.get(['channels'],function(result) {
-    //     let channels = result.channels
-    //     if(channels) {
-    //         channels = JSON.parse(channels)
-    //         let idx = 0
-    //         for(const [key,value] of Object.entries(channels)) {
-    //             handleInsert({idx: idx,id: value.id,name: value.name,customUrl: value.customUrl})
-    //             idx += 1
-    //         }
-    //     }
-    // })
-    // const request = fetch(url, {})
+function handleFillTableChannel() {
+    chrome.storage.local.get(['channels'],function(result) {
+        let channels = result.channels
+        if(channels) {
+            channels = JSON.parse(channels)
+            let idx = 0
+            for(const [key,value] of Object.entries(channels)) {
+                handleInsertChannel({idx: idx,id: value.id,name: value.name,customUrl: value.customUrl})
+                idx += 1
+            }
+        }
+    })
+}
+function handleFillTableKeyword() {
+    chrome.storage.local.get(['keywords'],function(result) {
+        let keywords = result.keywords
+        if(keywords) {
+            keywords = JSON.parse(keywords)
+            let idx = 0
+            for(const value of Object.keys(keywords)) {
+                if(typeof value === "string") {
+                    handleInsertKeyword({idx: idx,keyword: value})
+                    idx += 1
+                }
+            }
+        }
+    })
+}
+function handleShakeOnError(element) {
+    element.classList.add('shake')
+    setTimeout(() => {
+        element.classList.remove('shake')
+    },500)
 }
 function renderParticles() {
     Particles.init({
@@ -124,17 +238,26 @@ function renderParticles() {
         sizeVariations: 3,
     });
 }
+function getUrlParams(searchString,hashKey = null) {
+    try {
+        searchString = new URL(searchString).search
+        const params = new URLSearchParams(searchString),dict = {}
+        for(const [key,value] of params.entries()) dict[key] = value
+        if(hashKey) return dict[hashKey]
+        else return dict
+    } catch(e) {}
+}
 function init() {
     try {
         renderParticles()
-        handleFillTable()
-        handleSubmit()
+        handleFillTableChannel()
+        handleFillTableKeyword()
+        handleSubmitChannel()
         handleClearInput()
-        handleChangeInput()
+        handleSubmitKeyword()
+        handleTabs()
     } catch(e) {console.log(e)}
 }
 window.onload = function() {
     init()
-    fetch('https://youtuberblockerapi.herokuapp.com/api').then(ok => ok.json()).then(ok => console.log(ok))
-    console.log(chrome.runtime.id)
 };

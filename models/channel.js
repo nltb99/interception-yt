@@ -1,19 +1,22 @@
 const mongoose = require('mongoose')
 
 const channelSchema = new mongoose.Schema({
-  name: {
+  channelName: {
     type: String,
-    required: true
-  },
-  subscribedToChannel: {
-    type: String,
-    required: true
-  },
-  subscribeDate: {
-    type: Date,
     required: true,
-    default: Date.now
-  }
+  },
+  alias: {
+    type: String,
+    required: false,
+  },
+  channelId: {
+    type: String,
+    required: true,
+  },
+  idEx: {
+    type: String,
+    required: true,
+  },
 })
 
 module.exports = mongoose.model('Subscriber',channelSchema)

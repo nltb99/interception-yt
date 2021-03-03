@@ -4,7 +4,7 @@ function countTime(totalWatched = null,isYoutubeTab = true) {
     document.querySelector('.minute').innerHTML = ("0" + (time.getMinutes())).slice(-2);
     document.querySelector('.second').innerHTML = ("0" + (time.getSeconds())).slice(-2);
     if(!isYoutubeTab) return
-    chrome.storage.sync.set({totalWatched: JSON.stringify(Date.parse(new Date(totalWatched)))},function() {});
+    chrome.storage.local.set({totalWatched: JSON.stringify(Date.parse(new Date(totalWatched)))},function() {});
     clearTimeout(countTime.interval);
     countTime.interval = setTimeout(function() {
         countTime(totalWatched + 1000,isYoutubeTab)
@@ -18,21 +18,33 @@ function isToday(dateCompe) {
 function handleCountTime() {
     chrome.tabs.query({active: true,currentWindow: true},async function(tabs) {
         const currentTab = await tabs[0];
-        const isYoutubeTab = await (/https:\/\/www\.youtube\.com\//g).test(currentTab.url)
-        await chrome.storage.sync.get(['totalWatched'],function(result) {
-            let {totalWatched} = result
-            if(totalWatched !== undefined) {
-                totalWatched = +JSON.parse(totalWatched)
-                if(isToday(new Date(totalWatched))) {
-                    countTime(new Date(totalWatched).getTime(),isYoutubeTab);
-                } else {
-                    countTime(new Date(new Date().getFullYear(),new Date().getMonth() + 1,new Date().getDay(),0,0,0).getTime(),isYoutubeTab);
-                }
-            } else {
-                countTime(new Date(new Date().getFullYear(),new Date().getMonth() + 1,new Date().getDay(),0,0,0).getTime(),isYoutubeTab);
-            }
+        const isYoutubeTab = await (/^https:\/\/www\.youtube\.com\//g).test(currentTab.url)
+        await chrome.storage.local.get(['totalWatched'],function(result) {
+            // let {totalWatched} = result
+            // const currentDate = new Date(new Date().getFullYear(),new Date().getMonth() + 1,new Date().getDate(),0,0,0).getTime()
+            // if(totalWatched !== undefined) {
+            //     totalWatched = +JSON.parse(totalWatched)
+            //     if(isToday(new Date(totalWatched))) {
+            //         countTime(new Date(totalWatched).getTime(),isYoutubeTab);
+            //     } else {
+            //         countTime(currentDate,isYoutubeTab);
+            //     }
+            // } else {
+            //     countTime(currentDate,isYoutubeTab);
+            // }
         })
     });
+}
+function handleAddToBookmark() {
+    const add_to_bookmark = document.querySelector('.add_to_bookmark')
+    add_to_bookmark.addEventListener('click',() => {
+        chrome.bookmarks.create({
+            title: "Youtube Interception",
+            url: `chrome-extension://${chrome.runtime.id}/assets/options/index.html`,
+        },(newFolder) => {
+
+        });
+    })
 }
 function renderParticles() {
     Particles.init({
@@ -44,6 +56,7 @@ function renderParticles() {
 }
 function init() {
     handleCountTime()
+    handleAddToBookmark()
     renderParticles()
 }
 window.onload = function() {

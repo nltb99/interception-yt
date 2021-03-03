@@ -6,8 +6,6 @@ chrome.tabs.onUpdated.addListener(function(tabId,changeInfo,tab) {
     })
   }
 });
-chrome.runtime.onInstalled.addListener(() => {
-
-})
-// chrome.storage.sync.clear(function() {})
-
+// chrome.storage.local.clear(function() {})
+/// chrome.runtime.setUninstallURL("")
+chrome.runtime.onInstalled.addListener((re) => {})

@@ -1,10 +1,9 @@
-chrome.runtime.onMessage.addListener(
-    function(request,sender,sendResponse) {
-        if(request.message === 'urlchanged') {
-            init()
-        }
+chrome.runtime.onMessage.addListener(function(request,sender,sendResponse) {
+    if(request.message === 'urlchanged') {
+        init()
     }
-);
+});
+
 function removeVietnameseTones(str) {
     if(!str) return ""
     str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g,"a");
@@ -29,7 +28,7 @@ function removeVietnameseTones(str) {
 }
 function countTime(totalWatched = null) {
     totalWatched = +totalWatched
-    chrome.storage.sync.set({totalWatched: JSON.stringify(Date.parse(new Date(totalWatched)))},function() {});
+    chrome.storage.local.set({totalWatched: JSON.stringify(Date.parse(new Date(totalWatched)))},function() {});
     clearTimeout(countTime.interval);
     countTime.interval = setTimeout(function() {
         countTime(totalWatched + 1000)
@@ -49,33 +48,43 @@ function getUrlParams(hashKey = null) {
         else return dict
     } catch(e) {}
 }
-function includes(url) {
-    return window.location.href.includes(url)
+function includes(reg) {
+    return reg.test(window.location.href)
 }
 function matchReg(reg) {
     let pathname = new URL(window.location.href).pathname
     return decodeURIComponent(pathname.match(reg)[0])
 }
-
 function handleCountTime() {
-    chrome.storage.sync.get(['totalWatched'],function(result) {
+    chrome.storage.local.get(['totalWatched'],function(result) {
         let {totalWatched} = result
+        const currentDate = new Date(new Date().getFullYear(),new Date().getMonth() + 1,new Date().getDate(),0,0,0).getTime()
         if(totalWatched !== undefined) {
             totalWatched = +JSON.parse(totalWatched)
             if(isToday(new Date(totalWatched))) {
                 countTime(new Date(totalWatched).getTime());
             } else {
-                countTime(new Date(new Date().getFullYear(),new Date().getMonth() + 1,new Date().getDay(),0,0,0).getTime());
+                countTime(currentDate);
             }
         } else {
-            countTime(new Date(new Date().getFullYear(),new Date().getMonth() + 1,new Date().getDay(),0,0,0).getTime());
+            countTime(currentDate);
         }
     })
 }
 async function handleCheckUrlOnLoad() {
-    const id = await getUrlParams("v")
-    let channelId = null
-    if(id) {
+    const id = getUrlParams("v")
+    const searchQuery = getUrlParams("search_query")
+    let channelId = null,isMatchAlias = false
+    if(searchQuery) {
+        chrome.storage.local.get(['keywords'],function(result) {
+            if(result.keywords) {
+                let keywords = JSON.parse(result.keywords)
+                if(keywords[searchQuery.toLowerCase()] !== undefined) {
+                    window.location = "https://www.youtube.com"
+                }
+            }
+        })
+    } else if(id) {
         let url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id=${id}&key=AIzaSyDPpPlIMj5o_W3Q5B7qmn5-ex0kimioSiQ`
         const options = await {
             method: 'GET',
@@ -85,21 +94,17 @@ async function handleCheckUrlOnLoad() {
         };
         const request = await fetch(url,options)
         const data = await request.json()
-        channelId = data?.items[0].snippet?.channelId
+        channelId = await data?.items[0].snippet?.channelId
+    } else if(includes(/^https:\/\/www\.youtube\.com\/channel\//g)) {
+        channelId = matchReg(/(?<=channel\/)[\w].+/g)
+    } else if(includes(/^https:\/\/www\.youtube\.com\/c\//g)) {
+        channelId = matchReg(/(?<=c\/)[\w].+/g)
+        isMatchAlias = true
+    } else if(includes(/^https:\/\/www\.youtube\.com\/user\//g)) {
+        channelId = matchReg(/(?<=user\/)[\w].+/g)
+        isMatchAlias = true
     }
-    if(!channelId && includes("https://www.youtube.com/channel/")) {
-        channelId = await matchReg(/(?<=channel\/)[\w].+/g)
-    }
-    let isMatchAlias = false
-    if(!channelId && includes("https://www.youtube.com/c/")) {
-        channelId = await matchReg(/(?<=c\/)[\w].+/g)
-        isMatchAlias = await true
-    }
-    if(!channelId && includes("https://www.youtube.com/user/")) {
-        channelId = await matchReg(/(?<=user\/)[\w].+/g)
-        isMatchAlias = await true
-    }
-    await chrome.storage.sync.get(['channels'],function(result) {
+    chrome.storage.local.get(['channels'],function(result) {
         if(result.channels) {
             let channels = JSON.parse(result.channels)
             if(isMatchAlias) {
@@ -114,12 +119,12 @@ async function handleCheckUrlOnLoad() {
                     window.location = "https://www.youtube.com"
                 }
             }
-        } else {}
+        }
     });
 }
 function init() {
     try {
-        handleCountTime()
+        // handleCountTime()
         handleCheckUrlOnLoad()
     } catch(e) {console.log(e)}
 }

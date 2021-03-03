@@ -28,7 +28,7 @@ body {
 .header {
     padding: 20px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
 }
 
@@ -39,4 +39,53 @@ body {
 .icon {
     width: 30px;
     height: 30px;
+}
+
+button {
+    margin: 20px;
+}
+
+.add_to_bookmark {
+    width: 130px;
+    height: 40px;
+    color: #fff;
+    border-radius: 5px;
+    font-family: 'Lato', sans-serif;
+    font-weight: 500;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, .5), 7px 7px 20px 0px rgba(0, 0, 0, .1), 4px 4px 5px 0px rgba(0, 0, 0, .1);
+    outline: none;
+    background: linear-gradient(to left, #3e94ec, #25b7c4);
+    border: none;
+    z-index: 1;
+}
+
+.add_to_bookmark:after {
+    position: absolute;
+    content: "";
+    width: 0;
+    height: 100%;
+    top: 0;
+    right: 0;
+    z-index: -1;
+    background: #663dff;
+    border-radius: 5px;
+    box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, .5), 7px 7px 20px 0px rgba(0, 0, 0, .1), 4px 4px 5px 0px rgba(0, 0, 0, .1);
+    transition: all 0.3s ease;
+}
+
+.add_to_bookmark:hover {
+    color: #fff;
+}
+
+.add_to_bookmark:hover:after {
+    left: 0;
+    width: 100%;
+}
+
+.add_to_bookmark:active {
+    top: 2px;
 }
