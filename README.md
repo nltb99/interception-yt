@@ -6,7 +6,7 @@
 
 Are you tired of Youtube keeping popped up unwanted content on your feed constantly? Have you been concerned about which channel your kids will watch on Youtube? Well, that is why I wrote it. 
 
-This extension will intercept what you browse on Youtube and mapping to the storage and whether it should be navigate based on your decision.
+This extension will intercept what you browse on Youtube and mapping to the storage and whether it should navigate or not based on your decision.
 
 You can either add your unwanted channel to the list channels or just put some search keywords to the list keywords. It will intercept and handle it all for you.
 
