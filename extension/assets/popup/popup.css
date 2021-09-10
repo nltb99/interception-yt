@@ -6,15 +6,14 @@
 }
 
 :root {
-    --page-width: 300px;
-    --page-height: 300px;
+    --page-width: 250px;
+    --page-height: 250px;
     --background: linear-gradient(to left, #3e94ec, #25b7c4);
 }
 
 body {
     width: var(--page-width);
     height: var(--page-height);
-    /* background: var(--background); */
 }
 
 .background {
@@ -22,27 +21,18 @@ body {
     z-index: -1000;
     width: var(--page-width) !important;
     height: var(--page-height)!important;
-    top: 0;
 }
 
-.header {
-    padding: 20px;
+.container {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.time_container {
-    font-size: 20px;
+    height: 100%;
 }
 
 .icon {
     width: 30px;
     height: 30px;
-}
-
-button {
-    margin: 20px;
 }
 
 .add_to_bookmark {

@@ -10,9 +10,6 @@
     <script type="text/javascript" src="script.js" defer></script>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
 </head>
 
 <body>
@@ -24,8 +21,6 @@
         <div class="tabs">
             <input type="radio" id="tab1" class="tab" name="tab_control">
             <input type="radio" id="tab2" class="tab" name="tab_control">
-            <input type="radio" id="tab3" class="tab" name="tab_control">
-            <input type="radio" id="tab4" class="tab" name="tab_control">
             <ul>
                 <li>
                     <label for="tab1" role="button">
@@ -37,16 +32,6 @@
                         <i class="bi bi-file-earmark-text-fill"></i>
                         <span> Keywords</span></label>
                 </li>
-                <li>
-                    <label for="tab3" role="button">
-                        <i class="bi bi-cursor-fill"></i>
-                        <span> Usage</span></label>
-                </li>
-                <li>
-                    <label for="tab4" role="button">
-                        <i class="bi bi-house-door-fill"></i>
-                        <span> About us</span></label>
-                </li>
             </ul>
             <div class="slider">
                 <div class="indicator"></div>
@@ -55,9 +40,11 @@
                 <section class="container">
                     <div class="container_left">
                         <h1 class="title">Channels Blocked</h1>
-                        <form class="form_channel" style="width:inherit; display: flex;flex-wrap: nowrap;margin-bottom: 0px;">
+                        <form class="form_channel"
+                            style="width:inherit; display: flex;flex-wrap: nowrap;margin-bottom: 0px;">
                             <div style="width: 100%; display: flex;justify-content: flex-start;align-items: center">
-                                <input type="text" class="input_channel" placeholder="Input Channel..." autocomplete="off">
+                                <input type="text" class="input_channel" placeholder="Input Channel..."
+                                    autocomplete="off">
                                 <button type="button" class="clear_input_channel"><i class="bi bi-x"></i></button>
                             </div>
                             <i class="bi bi-youtube icon_input_insert"></i>
@@ -83,9 +70,12 @@
                 <section class="container">
                     <div class="container_left">
                         <h1 class="title">Keywords Blocked</h1>
-                        <form class="form_keyword" style="width:inherit; display: flex;flex-wrap: nowrap;margin-bottom: 0px;">
-                            <div style="position: relative;width: 100%; display: flex;justify-content: center;align-items:center">
-                                <input type="text" class="input_keyword" placeholder="Input Channel..." autocomplete="off">
+                        <form class="form_keyword"
+                            style="width:inherit; display: flex;flex-wrap: nowrap;margin-bottom: 0px;">
+                            <div
+                                style="position: relative;width: 100%; display: flex;justify-content: center;align-items:center">
+                                <input type="text" class="input_keyword" placeholder="Input Channel..."
+                                    autocomplete="off">
                                 <button type="button" class="clear_input_keyword"><i class="bi bi-x"></i></button>
                             </div>
                             <i class="bi bi-youtube icon_input_insert"></i>
@@ -103,71 +93,6 @@
                                 </thead>
                                 <tbody class="tbodyKeyword"></tbody>
                             </table>
-                        </div>
-                    </div>
-                </section>
-                <section class="container">
-                    <h1 class="title">Usage</h1>
-                    <div class="usage_container">
-                        <p><strong>1. Function to block youtube channel</strong></p>
-                        <img src="../options/images/step-1-1.png" alt="" style="width: 100%;">
-                    </div>
-                </section>
-                <section>
-                    <div style="margin-left: 100px; padding-top: 30px; font-weight: bolder; font-size: large;">
-                        <p>Currently, YouTube is a famous social networking site known to many people and no one seems to have determined whether </p>
-                        <p>YouTube is beneficial or harmful So we have been developing an extension for the Google browser Chrome for parents</p>
-                        <p> prevents kids from watching YouTube channels with socks content that can still be life-threatening.</p>
-                    </div>
-                    <h1 class="title">Our Team</h1>
-                    <div class="card-deck container" style="margin-left: 80px;">
-                        <div class="columnAU">
-                            <div class="cardAU">
-                                <img src="../options/images/bao.jpg" alt="Bao" style="width:100%">
-                                <div class="containerAU">
-                                    <h3 style="font-weight: bold;">Tien Bao</h3>
-                                    <p class="title">Leader</p>
-                                    <p></p>
-                                    <p>nltb@gmail.com</p>
-                                    <p><button class="buttonAU">Contact</button></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="columnAU">
-                            <div class="cardAU">
-                                <img src="../options/images/hao.jpg" alt="Hao" style="width:100%">
-                                <div class="containerAU">
-                                    <h3 style="font-weight: bold;">Minh Hao</h3>
-                                    <p class="title">Member</p>
-                                    <p></p>
-                                    <p>minhhao@gmail.com</p>
-                                    <p><button class="buttonAU">Contact</button></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="columnAU">
-                            <div class="cardAU">
-                                <img src="../options/images/an.jpg" alt="An" style="width:100%">
-                                <div class="containerAU">
-                                    <h3 style="font-weight: bold;">Truong An</h3>
-                                    <p class="title">Member</p>
-                                    <p></p>
-                                    <p>truongan@gmail.com</p>
-                                    <p><button class="buttonAU">Contact</button></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="columnAU">
-                            <div class="cardAU">
-                                <img src="../options/images/cong.jpg" alt="Cong" style="width:100%">
-                                <div class="containerAU">
-                                    <h3 style="font-weight: bold;">Van Cong</h3>
-                                    <p class="title">Member</p>
-                                    <p></p>
-                                    <p>vancong@gmail.com</p>
-                                    <p><button class="buttonAU">Contact</button></p>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </section>
