@@ -4,9 +4,9 @@
 
 ## Introduction
 
-Are you tired of Youtube keeping popped up unwanted content on your feed constantly? Have you been concerned about which channel your kids will watch on Youtube? Well, that is why I wrote it. 
+Are you tired of YouTube keeping popping up unwanted content on your feed constantly? Have you been concerned about which channel your kids will watch on YouTube? Well, that is why I wrote it. 
 
-This extension will intercept what you browse on Youtube and mapping to the storage and whether it should navigate or not based on your decision.
+This extension will intercept what you are browsing on YouTube and map to storage then whether it should navigate or not depending on your decision.
 
 You can either add your unwanted channel to the list channels or just put some search keywords to the list keywords. It will intercept and handle it all for you.
 
@@ -22,12 +22,12 @@ $ git clone https://github.com/nltb99/interception_yt
 ## How to use
 
 - Channels.
-    - Just simply paste the https link into the input add the channel to the black list 
+    - Simply paste the HTTPS link into the add channel entry on the blacklist.
     - Example
         - [Video Link](https://www.youtube.com/watch?v=r4neGQ-XACQ)  
         - [Channel Link](https://www.youtube.com/channel/UC7g2N5Wq9q4nDORe3x49Ftw) 
 - Keywords.
-    - Just merely input what keyword you don't like to search
+    - Just type in the keyword you don't like to search for.
 
 
 ```console 
