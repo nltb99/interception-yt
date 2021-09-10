@@ -1,6 +1,6 @@
 # Chrome Extension
 
-[![Chrome](imgs/chrome.png "Chrome")](https://chrome.google.com/webstore/detail/octotree/bkhaagjahfmjljalopjnoealnfndnagc)
+[![Chrome](imgs/chrome.png "Chrome")]()
 
 ## Introduction
 
@@ -13,7 +13,7 @@ You can either add your unwanted channel to the list channels or just put some s
 ## Usage
 ```console 
 # Clone the repo
-$ git clone https://github.com/nltb99/interception_yt
+$ git clone https://github.com/nltb99/interception_yt 
 # Open the "Manage Extensions" in Chrome Browser
 # Enabe "Developer mode"
 # Then load unpacked folder extension 
